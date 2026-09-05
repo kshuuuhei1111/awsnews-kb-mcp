@@ -16,7 +16,7 @@ AWS What's New / AWS 公式ブログの RSS を定期取得して Amazon Bedrock
 
 - [x] Phase 0: プロジェクト初期化
 - [x] Phase 1: KnowledgeBaseStack（S3 記事バケット、S3 Vectors、Bedrock KB）— `ap-northeast-1` にデプロイ済み
-- [ ] Phase 2: IngestionStack（RSS 取得 → Markdown 変換 → KB 取り込み）
+- [x] Phase 2: IngestionStack（RSS 取得 → Markdown 変換 → KB 取り込み）— 130記事の初回同期・KB検索まで確認済み
 - [ ] Phase 3: GatewayStack（Cognito、AgentCore Gateway、MCP ツール）
 - [ ] Phase 4: 動作確認・コスト実測・削除手順の確定
 
