@@ -1,0 +1,39 @@
+{
+  "name": "@awsnews-kb-mcp/infra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CDK infrastructure for the awsnews-kb-mcp handson (KnowledgeBase / Ingestion / Gateway stacks)",
+  "bin": {
+    "infra": "bin/infra.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy --all",
+    "destroy": "cdk destroy --all"
+  },
+  "volta": {
+    "node": "24.5.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^22.0.0",
+    "aws-cdk": "^2.1140.0",
+    "jest": "^30.5.1",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.6.0"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-lambda-python-alpha": "2.268.0-alpha.0",
+    "@cdklabs/generative-ai-cdk-constructs": "^0.1.320",
+    "aws-cdk-lib": "^2.268.0",
+    "constructs": "^10.8.1",
+    "source-map-support": "^0.5.21"
+  }
+}

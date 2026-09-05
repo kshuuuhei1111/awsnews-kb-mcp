@@ -34,12 +34,25 @@ Singapore, **Tokyo**), Canada (Central), Europe (Frankfurt, Ireland, London, Par
 Stockholm)）に対応し、2026年3月にさらに17リージョンへ拡大している。
 **`us-west-2` と `ap-northeast-1` はいずれも GA 初期リージョンに含まれる**。
 
-### Titan Text Embeddings v2
+### Titan Text Embeddings v2（実アカウントで検証済み）
 
-Bedrock のモデル提供リージョンとして `us-west-2`・`ap-northeast-1` の双方が一般的に対応
-（Bedrock の主要モデルはマルチリージョンで展開されており、東京リージョンでも主要テキスト系
-モデルは提供されている）。実アカウントでの `list-foundation-models` による最終確認は
-Phase 1 着手時に実施し、結果を本 ADR に追記する。
+2026-09-05、実アカウント（`ap-northeast-1`）で以下を確認した:
+
+```
+$ aws bedrock list-foundation-models --region ap-northeast-1 \
+    --query "modelSummaries[?contains(modelId,'titan-embed-text-v2')].modelId"
+["amazon.titan-embed-text-v2:0"]
+
+$ aws bedrock-runtime invoke-model --region ap-northeast-1 \
+    --model-id amazon.titan-embed-text-v2:0 \
+    --content-type application/json --accept application/json \
+    --cli-binary-format raw-in-base64-out --body '{"inputText":"test"}' out.json
+→ embedding length: 1024
+```
+
+モデルアクセスは有効化済みで、東京リージョンから `amazon.titan-embed-text-v2:0` を実際に
+呼び出し、1024次元の埋め込みが返ることを確認した。CDK 側の `dimension` はこれに合わせて
+`1024` を指定する。
 
 ## 決定
 
