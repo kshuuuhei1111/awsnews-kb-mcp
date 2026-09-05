@@ -1,0 +1,25 @@
+[project]
+name = "fetch-lambda"
+version = "0.1.0"
+description = "AWS What's New / 公式ブログの RSS を取得し、新着記事を Markdown に変換して S3 に書き込む Lambda"
+requires-python = ">=3.13"
+dependencies = [
+  "feedparser>=6.0.11",
+  "requests>=2.32.3",
+  "beautifulsoup4>=4.12.3",
+  "markdownify>=0.13.1",
+]
+
+[dependency-groups]
+dev = [
+  "boto3>=1.35",
+  "pytest>=8.3",
+  "responses>=0.25",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["fetch_lambda"]

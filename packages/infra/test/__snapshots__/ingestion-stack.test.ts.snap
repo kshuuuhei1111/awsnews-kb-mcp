@@ -1,0 +1,821 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`IngestionStack スナップショット 1`] = `
+{
+  "Outputs": {
+    "AlarmTopicArn": {
+      "Value": {
+        "Ref": "AlarmTopicD01E77F9",
+      },
+    },
+    "ArticleStateTableName": {
+      "Value": {
+        "Ref": "ArticleStateTable55A2A600",
+      },
+    },
+    "FetchFunctionName": {
+      "Value": {
+        "Ref": "FetchLambdaB01E6941",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "AlarmTopicD01E77F9": {
+      "Properties": {
+        "DisplayName": "awsnews-kb-mcp ingestion alarms",
+      },
+      "Type": "AWS::SNS::Topic",
+    },
+    "ArticleStateTable55A2A600": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "guid",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "guid",
+            "KeyType": "HASH",
+          },
+        ],
+        "Replicas": [
+          {
+            "Region": "ap-northeast-1",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "FetchFailureAlarmFBFDD3F8": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopicD01E77F9",
+          },
+        ],
+        "AlarmDescription": "RSS取得または記事変換が1件以上失敗した",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "FetchFailureCount",
+        "Namespace": "AwsNewsKbMcp",
+        "Period": 3600,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "FetchFailureMetricFilter98DF98B1": {
+      "Properties": {
+        "FilterPattern": "?"feed_fetch_failed" ?"article_process_failed"",
+        "LogGroupName": {
+          "Fn::GetAtt": [
+            "FetchLambdaLogRetention48CD1592",
+            "LogGroupName",
+          ],
+        },
+        "MetricTransformations": [
+          {
+            "MetricName": "FetchFailureCount",
+            "MetricNamespace": "AwsNewsKbMcp",
+            "MetricValue": "1",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::MetricFilter",
+    },
+    "FetchLambdaB01E6941": {
+      "DependsOn": [
+        "FetchLambdaServiceRoleDefaultPolicy54C81157",
+        "FetchLambdaServiceRoleBC778069",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "4111ce53975d385a4599ff80262b3797331091d96f9623f9ae5eed90c1ef8e84.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "ARTICLES_BUCKET_NAME": {
+              "Fn::ImportValue": "UpstreamStack:ExportsOutputRefDummyArticlesBucket4842A0B8719F8127",
+            },
+            "LOG_LEVEL": "INFO",
+            "STATE_TABLE_NAME": {
+              "Ref": "ArticleStateTable55A2A600",
+            },
+          },
+        },
+        "Handler": "fetch_lambda.handler.handler",
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "FetchLambdaServiceRoleBC778069",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 90,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FetchLambdaLogRetention48CD1592": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "FetchLambdaB01E6941",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 14,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "FetchLambdaServiceRoleBC778069": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FetchLambdaServiceRoleDefaultPolicy54C81157": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyArticlesBucket4842A0B8ArnE29B68FA",
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyArticlesBucket4842A0B8ArnE29B68FA",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ArticleStateTable55A2A600",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ArticleStateTable55A2A600",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FetchLambdaServiceRoleDefaultPolicy54C81157",
+        "Roles": [
+          {
+            "Ref": "FetchLambdaServiceRoleBC778069",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "FetchSchedule0BBA7495": {
+      "Properties": {
+        "Description": "AWS What's New / 公式ブログのRSSを6時間ごとに取得する",
+        "FlexibleTimeWindow": {
+          "Mode": "OFF",
+        },
+        "ScheduleExpression": "rate(6 hours)",
+        "ScheduleExpressionTimezone": "Etc/UTC",
+        "State": "ENABLED",
+        "Target": {
+          "Arn": {
+            "Fn::GetAtt": [
+              "FetchLambdaB01E6941",
+              "Arn",
+            ],
+          },
+          "RetryPolicy": {
+            "MaximumEventAgeInSeconds": 86400,
+            "MaximumRetryAttempts": 185,
+          },
+          "RoleArn": {
+            "Fn::GetAtt": [
+              "SchedulerRoleForTarget3f864686DC2748",
+              "Arn",
+            ],
+          },
+        },
+      },
+      "Type": "AWS::Scheduler::Schedule",
+    },
+    "IngestFailureAlarm07FAB427": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopicD01E77F9",
+          },
+        ],
+        "AlarmDescription": "StartIngestionJobが想定外の理由で失敗した（KB同時実行制約による再試行は含まない）",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "MetricName": "IngestionJobStartFailureCount",
+        "Namespace": "AwsNewsKbMcp",
+        "Period": 3600,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "IngestFailureMetricFilter3D06B66B": {
+      "Properties": {
+        "FilterPattern": ""ingestion_job_start_failed"",
+        "LogGroupName": {
+          "Fn::GetAtt": [
+            "IngestTriggerLambdaLogRetentionDF2D833B",
+            "LogGroupName",
+          ],
+        },
+        "MetricTransformations": [
+          {
+            "MetricName": "IngestionJobStartFailureCount",
+            "MetricNamespace": "AwsNewsKbMcp",
+            "MetricValue": "1",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::MetricFilter",
+    },
+    "IngestTriggerLambda399B4F60": {
+      "DependsOn": [
+        "IngestTriggerLambdaServiceRoleDefaultPolicy5D24762E",
+        "IngestTriggerLambdaServiceRole55CAD92E",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "90dd621d27dd41b9f80bd35c244f43dc662d243e1f0ea07507fa7d0fa5558af6.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "DATA_SOURCE_ID": "ZYXWVUTSRQ",
+            "KNOWLEDGE_BASE_ID": "ABCDEFGHIJ",
+            "LOG_LEVEL": "INFO",
+          },
+        },
+        "Handler": "ingest_trigger_lambda.handler.handler",
+        "MemorySize": 256,
+        "Role": {
+          "Fn::GetAtt": [
+            "IngestTriggerLambdaServiceRole55CAD92E",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 30,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "IngestTriggerLambdaLogRetentionDF2D833B": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "IngestTriggerLambda399B4F60",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 14,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "IngestTriggerLambdaServiceRole55CAD92E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "IngestTriggerLambdaServiceRoleDefaultPolicy5D24762E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "bedrock:StartIngestionJob",
+              "Effect": "Allow",
+              "Resource": "arn:aws:bedrock:ap-northeast-1:123456789012:knowledge-base/ABCDEFGHIJ",
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyKbIngestQueue0485149EArn25FBA552",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "IngestTriggerLambdaServiceRoleDefaultPolicy5D24762E",
+        "Roles": [
+          {
+            "Ref": "IngestTriggerLambdaServiceRole55CAD92E",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "IngestTriggerLambdaSqsEventSourceUpstreamStackDummyKbIngestQueue3C273291C3F25B28": {
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyKbIngestQueue0485149EArn25FBA552",
+        },
+        "FunctionName": {
+          "Ref": "IngestTriggerLambda399B4F60",
+        },
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures",
+        ],
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "KbIngestDlqNotEmptyAlarmFAF25083": {
+      "Properties": {
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopicD01E77F9",
+          },
+        ],
+        "AlarmDescription": "KB追加キューのDLQにメッセージが滞留している",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyKbIngestDlq0424DF81QueueNameE8598FF9",
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "ApproximateNumberOfMessagesVisible",
+        "Namespace": "AWS/SQS",
+        "Period": 300,
+        "Statistic": "Maximum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+      "DependsOn": [
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "Roles": [
+          {
+            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "NotifierLambdaAlarmTopic069D7D96": {
+      "Properties": {
+        "Endpoint": {
+          "Fn::GetAtt": [
+            "NotifierLambdaF56D8BAF",
+            "Arn",
+          ],
+        },
+        "Protocol": "lambda",
+        "TopicArn": {
+          "Ref": "AlarmTopicD01E77F9",
+        },
+      },
+      "Type": "AWS::SNS::Subscription",
+    },
+    "NotifierLambdaAllowInvokeTestIngestionStackAlarmTopic9D3A6D475D97C7B8": {
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "NotifierLambdaF56D8BAF",
+            "Arn",
+          ],
+        },
+        "Principal": "sns.amazonaws.com",
+        "SourceArn": {
+          "Ref": "AlarmTopicD01E77F9",
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "NotifierLambdaF56D8BAF": {
+      "DependsOn": [
+        "NotifierLambdaServiceRoleDefaultPolicy805F373B",
+        "NotifierLambdaServiceRoleB442BC9D",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "a5919ee120204e782cb2213dc0d3db4f5d71e1714cd8e55d64eb466be19eaca1.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "LOG_LEVEL": "INFO",
+            "SLACK_WEBHOOK_SSM_PARAM": "/awsnews-kb-mcp/slack-webhook-url",
+          },
+        },
+        "Handler": "notifier_lambda.handler.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "NotifierLambdaServiceRoleB442BC9D",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 15,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "NotifierLambdaLogRetentionFEB13F04": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "NotifierLambdaF56D8BAF",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 14,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "NotifierLambdaServiceRoleB442BC9D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "NotifierLambdaServiceRoleDefaultPolicy805F373B": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ssm:ap-northeast-1:123456789012:parameter/awsnews-kb-mcp/slack-webhook-url",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "NotifierLambdaServiceRoleDefaultPolicy805F373B",
+        "Roles": [
+          {
+            "Ref": "NotifierLambdaServiceRoleB442BC9D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "SchedulerRoleForTarget3f864686DC2748": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "123456789012",
+                  "aws:SourceArn": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":scheduler:ap-northeast-1:123456789012:schedule-group/default",
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "scheduler.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SchedulerRoleForTarget3f8646DefaultPolicy31C75321": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "FetchLambdaB01E6941",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "FetchLambdaB01E6941",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SchedulerRoleForTarget3f8646DefaultPolicy31C75321",
+        "Roles": [
+          {
+            "Ref": "SchedulerRoleForTarget3f864686DC2748",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;

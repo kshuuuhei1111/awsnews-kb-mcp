@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>AWS What's New</title>
+    <link>https://aws.amazon.com/about-aws/whats-new/recent/</link>
+    <description>Sample feed for testing</description>
+    <item>
+      <title>Amazon Example Service now supports a new feature</title>
+      <link>https://aws.amazon.com/about-aws/whats-new/2026/09/example-service-new-feature/</link>
+      <guid isPermaLink="false">https://aws.amazon.com/about-aws/whats-new/2026/09/example-service-new-feature/</guid>
+      <pubDate>Tue, 01 Sep 2026 10:00:00 +0000</pubDate>
+      <description>&lt;p&gt;This is a summary of the new feature.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Another Example Update</title>
+      <link>https://aws.amazon.com/about-aws/whats-new/2026/09/another-example-update/</link>
+      <guid isPermaLink="false">https://aws.amazon.com/about-aws/whats-new/2026/09/another-example-update/</guid>
+      <pubDate>Wed, 02 Sep 2026 08:30:00 +0000</pubDate>
+      <description>&lt;p&gt;Summary of another update.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,231 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="handson-awsnews-kb-mcp" id="handson-awsnews-kb-mcp">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="awscloud" value="AWS Cloud" style="points=[[0,0],[0.25,0],[0.5,0],[0.75,0],[1,0],[1,0.25],[1,0.5],[1,0.75],[1,1],[0.75,1],[0.5,1],[0.25,1],[0,1],[0,0.75],[0,0.5],[0,0.25]];outlineConnect=0;gradientColor=none;html=1;whiteSpace=wrap;fontSize=13;fontStyle=0;container=0;pointerEvents=0;collapsible=0;recursiveResize=0;shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud_alt;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="260" width="1660" height="1080" as="geometry"/>
+        </mxCell>
+        <mxCell id="laneA" value="① 読み取り経路（読み取り専任）　MCP クライアント → AgentCore Gateway（Cognito JWT 認可）→ ツール Lambda → KB Retrieve" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="320" width="900" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="bandK" value="③ 知識層（両経路の唯一の接点）　S3 記事バケット + Bedrock Knowledge Base + S3 Vectors" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="660" width="960" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="laneB" value="② 取り込みパイプライン（書き込み専任・Pull 方式）　Scheduler → Fetch Lambda → S3 → SQS → Ingest Lambda → StartIngestionJob" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="910" width="1520" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_client_gw" value="MCP (Streamable HTTP) + Bearer JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#CCE5FF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="client" target="gateway" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="430"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_client_cog" value="OAuth2 認可コードフロー（mcp-remote）→ JWT 取得" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;dashed=1;" edge="1" source="client" target="cognito" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="550"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_cog_gw" value="JWKS 取得 → JWT 署名検証" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#CCE5FF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;dashed=1;" edge="1" source="cognito" target="gateway" parent="1">
+          <mxGeometry relative="1" as="geometry" x="-0.85">
+            <Array as="points">
+              <mxPoint x="510" y="480"/>
+              <mxPoint x="770" y="480"/>
+            </Array>
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_gw_tool" value="ツール呼び出し (Lambda ターゲット)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#CCE5FF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="gateway" target="toolfn" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="430"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_tool_s3" value="GetObject (記事全文)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#CCE5FF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="toolfn" target="s3news" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="600"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_tool_kb" value="Retrieve (日付・カテゴリでメタデータフィルタ)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="toolfn" target="kb" parent="1">
+          <mxGeometry relative="1" as="geometry" x="0.45">
+            <Array as="points">
+              <mxPoint x="1220" y="430"/>
+              <mxPoint x="1220" y="640"/>
+              <mxPoint x="1330" y="640"/>
+            </Array>
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s3_kb" value="データソース (Ingest 時に読み取り)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFF2CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="s3news" target="kb" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="750"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_kb_vec" value="ベクトル格納 / 近傍検索" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFF2CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="kb" target="s3vec" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1460" y="750"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sched_fetch" value="6 時間ごとに起動" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="scheduler" target="fetchfn" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="1030"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_fetch_rss" value="RSS 取得 → 新着記事の本文取得 (HTML→Markdown)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="fetchfn" target="rss" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="960"/>
+              <mxPoint x="160" y="960"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_fetch_state" value="GUID 差分判定 / 記録" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="fetchfn" target="state" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="1105"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_fetch_s3" value="PutObject (.md + .metadata.json)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="fetchfn" target="s3news" parent="1">
+          <mxGeometry relative="1" as="geometry" x="-0.5">
+            <Array as="points">
+              <mxPoint x="900" y="1030"/>
+              <mxPoint x="900" y="750"/>
+            </Array>
+            <mxPoint as="offset"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_s3_sqs" value="S3 イベント通知 (ObjectCreated)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="s3news" target="sqs" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="890"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sqs_ingest" value="バッチ 10 件 / 最大 4 回リトライ" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="sqs" target="ingestfn" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="1030"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sqs_dlq" value="リトライ超過" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="sqs" target="dlq" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="1105"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ingest_kb" value="StartIngestionJob (実行中なら再キュー)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="ingestfn" target="kb" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="890"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dlq_alarm" value="DLQ 滞留を検知" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="dlq" target="alarm" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="1180"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ingest_alarm" value="Ingest 失敗率" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;dashed=1;" edge="1" source="ingestfn" target="alarm" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1330" y="1120"/>
+              <mxPoint x="1590" y="1120"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_alarm_sns" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#FFE6CC;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="alarm" target="sns" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1700" y="1180"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sns_slack" value="運用通知" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="sns" target="slack" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1950" y="1180"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="client" value="&lt;span style=&quot;background-color: rgb(245, 245, 245);&quot;&gt;開発者&lt;br&gt;(Claude Desktop / Kiro / Claude Code)&lt;br&gt;+ mcp-remote&lt;/span&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;html=1;fontSize=11;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+          <mxGeometry x="110" y="400" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="cognito" value="&lt;span style=&quot;background-color: rgb(204, 229, 255);&quot;&gt;Amazon Cognito&lt;br&gt;(OAuth2 / OIDC IdP)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
+          <mxGeometry x="480" y="520" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="gateway" value="&lt;span style=&quot;background-color: rgb(204, 229, 255);&quot;&gt;AgentCore Gateway&lt;br&gt;(MCP エンドポイント / JWT Authorizer)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="740" y="400" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="toolfn" value="&lt;span style=&quot;background-color: rgb(204, 229, 255);&quot;&gt;ツール Lambda&lt;br&gt;search_aws_updates / get_article&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="400" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="noteDCR" value="※ Gateway は MCP 認可仕様の動的クライアント登録（DCR）に未対応。Claude Desktop 直結ではなく、mcp-remote に Cognito のクライアント情報を静的設定して認可コードフローで JWT を取得する。" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="820" y="520" width="360" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3news" value="&lt;span style=&quot;background-color: rgb(255, 242, 204);&quot;&gt;S3 記事バケット&lt;br&gt;news/YYYY/MM/&amp;lt;slug&amp;gt;.md&lt;br&gt;+ .metadata.json&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="720" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="kb" value="&lt;span style=&quot;background-color: rgb(255, 242, 204);&quot;&gt;Bedrock&lt;br&gt;Knowledge Base&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#01A88D;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.bedrock;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="720" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3vec" value="&lt;span style=&quot;background-color: rgb(255, 242, 204);&quot;&gt;S3 Vectors&lt;br&gt;(ベクトルインデックス)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="720" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="noteEmb" value="埋め込み: Titan Text Embeddings v2&lt;br&gt;メタデータ: published_at / category / source / url&lt;br&gt;→ Retrieve 時に日付・カテゴリで絞り込み可能" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="1660" y="700" width="230" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="rss" value="AWS What's New RSS&lt;br&gt;AWS News Blog RSS&lt;br&gt;AWS Japan Blog RSS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#36393d;fontSize=11;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1000" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="scheduler" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;EventBridge&lt;br&gt;Scheduler (6h)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.eventbridge;" vertex="1" parent="1">
+          <mxGeometry x="480" y="1000" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="fetchfn" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;Fetch Lambda&lt;br&gt;(RSS 差分取得・本文 Markdown 化)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="740" y="1000" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="state" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;State Store&lt;br&gt;DynamoDB (記事 GUID)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#C925D1;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.dynamodb;" vertex="1" parent="1">
+          <mxGeometry x="740" y="1150" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="sqs" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;SQS&lt;br&gt;KB 追加キュー&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="1000" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="dlq" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;SQS DLQ&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sqs;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="1150" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="ingestfn" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;KB Ingest Trigger&lt;br&gt;Lambda&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="1000" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="alarm" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;CloudWatch Alarm&lt;br&gt;(DLQ 滞留 / Fetch・Ingest 失敗)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="1150" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="sns" value="&lt;span style=&quot;background-color: rgb(255, 230, 204);&quot;&gt;SNS Ops&lt;br&gt;(運用通知集約)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#E7157B;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.sns;" vertex="1" parent="1">
+          <mxGeometry x="1780" y="1150" width="60" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="slack" value="Slack&lt;br&gt;(運用通知)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#36393d;fontSize=11;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="2060" y="1150" width="100" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="title" value="&lt;h1 style=&quot;margin-top:0px;&quot;&gt;ハンズオン: AWS 更新情報ナレッジベース + MCP 読み取り経路（2026/09/04）&lt;/h1&gt;&lt;div&gt;&lt;b style=&quot;font-size:12px;&quot;&gt;ユースケース概要&lt;/b&gt;&lt;/div&gt;&lt;div&gt;AWS What&amp;#39;s New / 公式ブログの RSS を &lt;b&gt;定期的に取得して Bedrock Knowledge Base に取り込み&lt;/b&gt;、&lt;b&gt;Claude Desktop / Kiro / Claude Code から MCP 経由で検索・深掘り&lt;/b&gt;できるようにする。UC55 と同じく、&lt;b&gt;取り込み側（書き込み専任）と読み取り側（読み取り専任）は直接つながらず、S3 と KB を挟んで疎結合&lt;/b&gt;に連携する。回答生成は MCP クライアント側の LLM が行うため、サーバー側に AgentCore Runtime や回答生成 LLM は不要。ベクトルストアは S3 Vectors、VPC なし、全コンポーネントがサーバーレス（放置しても月数ドル）。&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+          <mxGeometry x="300" y="40" width="1660" height="190" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
