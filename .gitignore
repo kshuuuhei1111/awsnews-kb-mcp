@@ -1,0 +1,36 @@
+# Secrets / local env
+.env
+.env.local
+*.pem
+
+# Node / CDK
+node_modules/
+cdk.out/
+cdk.context.json
+*.js
+*.d.ts
+!jest.config.js
+!.eslintrc.js
+coverage/
+npm-debug.log*
+
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+requirements.txt
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.log
