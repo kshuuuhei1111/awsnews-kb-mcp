@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
+import { GatewayStack } from '../lib/gateway-stack';
 import { IngestionStack } from '../lib/ingestion-stack';
 import { KnowledgeBaseStack } from '../lib/knowledge-base-stack';
 
@@ -30,3 +31,13 @@ const ingestionStack = new IngestionStack(app, 'IngestionStack', {
     app.node.tryGetContext('slackWebhookSsmParam') ?? '/awsnews-kb-mcp/slack-webhook-url',
 });
 ingestionStack.addDependency(knowledgeBaseStack);
+
+const gatewayStack = new GatewayStack(app, 'GatewayStack', {
+  env,
+  description: 'awsnews-kb-mcp: Cognito + AgentCore Gateway + MCPツール(search_aws_updates / get_article)',
+  articlesBucket: knowledgeBaseStack.articlesBucket,
+  knowledgeBaseArn: knowledgeBaseStack.knowledgeBase.knowledgeBaseArn,
+  knowledgeBaseId: knowledgeBaseStack.knowledgeBase.knowledgeBaseId,
+  oauthCallbackUrls: app.node.tryGetContext('oauthCallbackUrls'),
+});
+gatewayStack.addDependency(knowledgeBaseStack);

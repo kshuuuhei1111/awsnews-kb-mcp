@@ -1,5 +1,5 @@
 [tool.uv.workspace]
-members = ["packages/ingestion/*"]
+members = ["packages/ingestion/*", "packages/tools/*"]
 
 [tool.ruff]
 line-length = 100
@@ -9,5 +9,5 @@ target-version = "py313"
 select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.pytest.ini_options]
-testpaths = ["packages/ingestion"]
+testpaths = ["packages/ingestion", "packages/tools"]
 addopts = "--import-mode=importlib"

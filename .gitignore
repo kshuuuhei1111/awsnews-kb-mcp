@@ -2,6 +2,14 @@
 .env
 .env.local
 *.pem
+*.key
+# AWS の認証情報（IAM ユーザーのアクセスキー CSV など）
+*credentials*
+*accessKeys*
+*.csv
+# MCP クライアントのローカル設定・OAuth トークン
+.mcp.json
+.mcp-auth/
 
 # Node / CDK
 node_modules/

@@ -5,6 +5,7 @@ requires-python = ">=3.13"
 [manifest]
 members = [
     "fetch-lambda",
+    "gateway-tools-lambda",
     "ingest-trigger-lambda",
     "notifier-lambda",
 ]
@@ -235,6 +236,25 @@ dev = [
     { name = "boto3", specifier = ">=1.35" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "responses", specifier = ">=0.25" },
+]
+
+[[package]]
+name = "gateway-tools-lambda"
+version = "0.1.0"
+source = { editable = "packages/tools/gateway_tools_lambda" }
+
+[package.dev-dependencies]
+dev = [
+    { name = "boto3" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "boto3", specifier = ">=1.35" },
+    { name = "pytest", specifier = ">=8.3" },
 ]
 
 [[package]]

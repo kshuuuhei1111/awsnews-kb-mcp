@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from fetch_lambda import handler as handler_module
 from fetch_lambda.models import FeedEntry, FeedSource
@@ -82,6 +84,12 @@ def test_handler_processes_only_new_entries_and_writes_both_objects(
     assert result == {"processed": 1, "skipped": 1, "failed": 0}
     assert "new-guid" in fake_table.items
     assert len(fake_s3.objects) == 2  # 本文 .md + .md.metadata.json
+
+    metadata_key = next(k for k in fake_s3.objects if k.endswith(".metadata.json"))
+    attributes = json.loads(fake_s3.objects[metadata_key])["metadataAttributes"]
+    assert attributes["published_at"] == "2026-09-01T00:00:00+00:00"
+    assert attributes["published_at_epoch"] == 1788220800
+    assert attributes["lang"] == "en"
 
 
 def test_handler_counts_feed_fetch_failure_per_source(monkeypatch: pytest.MonkeyPatch) -> None:

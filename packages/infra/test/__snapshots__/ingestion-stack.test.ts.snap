@@ -104,7 +104,7 @@ exports[`IngestionStack スナップショット 1`] = `
       "Properties": {
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
-          "S3Key": "4111ce53975d385a4599ff80262b3797331091d96f9623f9ae5eed90c1ef8e84.zip",
+          "S3Key": "fca69ae2b2b6c35f39d14ba7759100ae6c7115b15633b61f2cd8a71b9b9ca218.zip",
         },
         "Environment": {
           "Variables": {

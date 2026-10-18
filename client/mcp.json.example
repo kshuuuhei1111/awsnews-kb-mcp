@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "awsnews-kb": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "<GatewayStackのCfnOutput GatewayUrl の値>",
+        "8090"
+      ]
+    }
+  }
+}

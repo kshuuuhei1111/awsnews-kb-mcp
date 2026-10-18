@@ -10,6 +10,27 @@ AWS What's New / AWS 公式ブログの RSS を定期取得して Amazon Bedrock
 詳細な設計・ディレクトリ構成・技術選定の理由は [CLAUDE.md](CLAUDE.md) と
 [docs/adr/](docs/adr/) を参照してください。
 
+## 構成
+
+```mermaid
+flowchart LR
+  RSS(["AWS RSS"]) --> ING["IngestionStack<br/>RSS 取得 → Markdown 変換"]
+  ING -- "*.md + .metadata.json" --> KB["KnowledgeBaseStack<br/>S3 記事バケット → Bedrock KB → S3 Vectors"]
+  CLIENT(["Claude Code / Kiro"]) -- MCP --> GW["GatewayStack<br/>Cognito + AgentCore Gateway<br/>search_aws_updates / get_article"]
+  GW -- Retrieve / GetObject --> KB
+```
+
+| ディレクトリ | 内容 |
+|---|---|
+| `packages/infra` | CDK（3スタック） |
+| `packages/ingestion` | 取り込み側の Lambda（Fetch / Ingest Trigger / Notifier） |
+| `packages/tools` | MCP ツールの Lambda |
+| `client` | MCP クライアントの接続手順 |
+| `scripts` | 取り込み状況の確認、メタデータの追記 |
+
+リソース構成、コードとスタックの対応、処理の流れ、メタデータ項目、既知の課題は
+[docs/design.md](docs/design.md) にまとめています。
+
 ## ステータス
 
 このハンズオンは以下のフェーズで段階的に構築します。現在の進捗:
@@ -17,7 +38,9 @@ AWS What's New / AWS 公式ブログの RSS を定期取得して Amazon Bedrock
 - [x] Phase 0: プロジェクト初期化
 - [x] Phase 1: KnowledgeBaseStack（S3 記事バケット、S3 Vectors、Bedrock KB）— `ap-northeast-1` にデプロイ済み
 - [x] Phase 2: IngestionStack（RSS 取得 → Markdown 変換 → KB 取り込み）— 130記事の初回同期・KB検索まで確認済み
-- [ ] Phase 3: GatewayStack（Cognito、AgentCore Gateway、MCP ツール）
+- [x] Phase 3: GatewayStack（Cognito、AgentCore Gateway、MCP ツール）— `ap-northeast-1` にデプロイ済み。
+      `mcp-remote` からの実接続はまだ未検証
+      （[docs/adr/0004](docs/adr/0004-gateway-cognito-app-client.md)、[client/README.md](client/README.md) 参照）
 - [ ] Phase 4: 動作確認・コスト実測・削除手順の確定
 
 ## 前提条件
@@ -54,11 +77,23 @@ npx cdk deploy GatewayStack
 
 ## 接続（Kiro / Claude Code）
 
-（Phase 3 で `client/mcp.json` サンプルと合わせて追記します）
+`GatewayStack` デプロイ後の接続手順は [client/README.md](client/README.md) と
+[client/mcp.json.example](client/mcp.json.example) を参照してください。
+実機での接続確認はまだ行っておらず、未検証事項は client/README.md に明記しています。
 
 ## 動作確認の質問例
 
-（Phase 3 完了後に、`search_aws_updates` / `get_article` を使った質問例を追記します）
+（実機接続確認後に、`search_aws_updates` / `get_article` を使った質問例を追記します）
+
+## S3 → KB → S3 Vectors の取り込み状況を確認する
+
+```bash
+# Ingestion Job履歴 + ドキュメントのステータス別件数（INDEXED件数など）
+scripts/check-kb-sync.sh
+
+# 特定記事がS3 Vectorsまで登録済みか追跡する（S3キー/URLの一部を指定）
+scripts/check-kb-sync.sh aurora-dsql
+```
 
 ## トラブルシュート
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+from datetime import datetime
 from typing import Any
 
 import boto3
@@ -25,16 +26,19 @@ SOURCES: list[FeedSource] = [
         name="whats-new",
         url="https://aws.amazon.com/about-aws/whats-new/recent/feed/",
         category="whats-new",
+        lang="en",
     ),
     FeedSource(
         name="news-blog",
         url="https://aws.amazon.com/blogs/aws/feed/",
         category="news-blog",
+        lang="en",
     ),
     FeedSource(
         name="jp-blog",
         url="https://aws.amazon.com/jp/blogs/news/feed/",
         category="jp-blog",
+        lang="ja",
     ),
 ]
 
@@ -82,8 +86,10 @@ def _process_entry(source: FeedSource, entry: FeedEntry, bucket: str) -> None:
         title=entry.title,
         url=entry.link,
         published_at=entry.published_at,
+        published_at_epoch=int(datetime.fromisoformat(entry.published_at).timestamp()),
         category=source.category,
         source=source.name,
+        lang=source.lang,
     )
     key = build_object_key(entry.published_at, entry.title, entry.guid)
     put_article(_s3, bucket, key, markdown, metadata.to_bedrock_metadata())

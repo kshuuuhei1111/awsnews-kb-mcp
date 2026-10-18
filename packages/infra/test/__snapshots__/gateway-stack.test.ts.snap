@@ -1,0 +1,569 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`GatewayStack スナップショット 1`] = `
+{
+  "Outputs": {
+    "GatewayToolsFunctionName": {
+      "Value": {
+        "Ref": "GatewayToolsLambdaE3968EBB",
+      },
+    },
+    "GatewayUrl": {
+      "Description": "MCPクライアント(mcp-remote)が接続するAgentCore GatewayのURL",
+      "Value": {
+        "Fn::GetAtt": [
+          "Gateway",
+          "GatewayUrl",
+        ],
+      },
+    },
+    "OidcDiscoveryUrl": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://cognito-idp.ap-northeast-1.amazonaws.com/",
+            {
+              "Ref": "McpUserPoolBB3D65BD",
+            },
+            "/.well-known/openid-configuration",
+          ],
+        ],
+      },
+    },
+    "UserPoolClientId": {
+      "Value": {
+        "Ref": "McpUserPoolMcpClientD2CA74CC",
+      },
+    },
+    "UserPoolDomain": {
+      "Description": "ホストUIドメイン（Authorization Code Grantのログイン画面）",
+      "Value": {
+        "Ref": "McpUserPoolMcpUserPoolDomainDFFE710D",
+      },
+    },
+    "UserPoolId": {
+      "Value": {
+        "Ref": "McpUserPoolBB3D65BD",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "Gateway": {
+      "Properties": {
+        "AuthorizerConfiguration": {
+          "CustomJWTAuthorizer": {
+            "AllowedClients": [
+              {
+                "Ref": "McpUserPoolMcpClientD2CA74CC",
+              },
+            ],
+            "DiscoveryUrl": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://cognito-idp.ap-northeast-1.amazonaws.com/",
+                  {
+                    "Ref": "McpUserPoolBB3D65BD",
+                  },
+                  "/.well-known/openid-configuration",
+                ],
+              ],
+            },
+          },
+        },
+        "AuthorizerType": "CUSTOM_JWT",
+        "Description": "AWS What's New / 公式ブログを検索するMCPゲートウェイ",
+        "Name": "awsnews-kb-mcp-gateway",
+        "ProtocolType": "MCP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "GatewayExecutionRole16B5E8DF",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::BedrockAgentCore::Gateway",
+    },
+    "GatewayExecutionRole16B5E8DF": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "aws:SourceAccount": "123456789012",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GatewayExecutionRoleDefaultPolicyD642E70C": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "GatewayToolsLambdaE3968EBB",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "GatewayToolsLambdaE3968EBB",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GatewayExecutionRoleDefaultPolicyD642E70C",
+        "Roles": [
+          {
+            "Ref": "GatewayExecutionRole16B5E8DF",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GatewayToolsLambdaE3968EBB": {
+      "DependsOn": [
+        "GatewayToolsLambdaServiceRoleDefaultPolicyE859A8BB",
+        "GatewayToolsLambdaServiceRole18FAFA57",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "baa2e10154fb3992007ee65d35437099c66de98dc36a5006758dad6999c8a5fc.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "KNOWLEDGE_BASE_ID": "ABCDEFGHIJ",
+            "LOG_LEVEL": "INFO",
+          },
+        },
+        "Handler": "gateway_tools_lambda.handler.handler",
+        "MemorySize": 256,
+        "Role": {
+          "Fn::GetAtt": [
+            "GatewayToolsLambdaServiceRole18FAFA57",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.13",
+        "Timeout": 30,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "GatewayToolsLambdaLogRetention016E9DFE": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "GatewayToolsLambdaE3968EBB",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 14,
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "GatewayToolsLambdaServiceRole18FAFA57": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GatewayToolsLambdaServiceRoleDefaultPolicyE859A8BB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "bedrock:Retrieve",
+              "Effect": "Allow",
+              "Resource": "arn:aws:bedrock:ap-northeast-1:123456789012:knowledge-base/ABCDEFGHIJ",
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyArticlesBucket4842A0B8ArnE29B68FA",
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::ImportValue": "UpstreamStack:ExportsOutputFnGetAttDummyArticlesBucket4842A0B8ArnE29B68FA",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GatewayToolsLambdaServiceRoleDefaultPolicyE859A8BB",
+        "Roles": [
+          {
+            "Ref": "GatewayToolsLambdaServiceRole18FAFA57",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+      "DependsOn": [
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456789012-ap-northeast-1",
+          "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "Roles": [
+          {
+            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "McpUserPoolBB3D65BD": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AccountRecoverySetting": {
+          "RecoveryMechanisms": [
+            {
+              "Name": "verified_phone_number",
+              "Priority": 1,
+            },
+            {
+              "Name": "verified_email",
+              "Priority": 2,
+            },
+          ],
+        },
+        "AdminCreateUserConfig": {
+          "AllowAdminCreateUserOnly": true,
+        },
+        "EmailVerificationMessage": "The verification code to your new account is {####}",
+        "EmailVerificationSubject": "Verify your new account",
+        "SmsVerificationMessage": "The verification code to your new account is {####}",
+        "UserPoolName": "awsnews-kb-mcp",
+        "VerificationMessageTemplate": {
+          "DefaultEmailOption": "CONFIRM_WITH_CODE",
+          "EmailMessage": "The verification code to your new account is {####}",
+          "EmailSubject": "Verify your new account",
+          "SmsMessage": "The verification code to your new account is {####}",
+        },
+      },
+      "Type": "AWS::Cognito::UserPool",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "McpUserPoolGatewayResourceServerF215BA42": {
+      "Properties": {
+        "Identifier": "awsnews-gateway",
+        "Name": "awsnews-gateway",
+        "Scopes": [
+          {
+            "ScopeDescription": "AgentCore Gateway経由でMCPツール(search_aws_updates / get_article)を呼び出す",
+            "ScopeName": "invoke",
+          },
+        ],
+        "UserPoolId": {
+          "Ref": "McpUserPoolBB3D65BD",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolResourceServer",
+    },
+    "McpUserPoolMcpClientD2CA74CC": {
+      "Properties": {
+        "AllowedOAuthFlows": [
+          "code",
+        ],
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthScopes": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Ref": "McpUserPoolGatewayResourceServerF215BA42",
+                },
+                "/invoke",
+              ],
+            ],
+          },
+        ],
+        "CallbackURLs": [
+          "http://localhost:8090/oauth/callback",
+          "http://localhost:8090/callback",
+        ],
+        "GenerateSecret": false,
+        "PreventUserExistenceErrors": "ENABLED",
+        "SupportedIdentityProviders": [
+          "COGNITO",
+        ],
+        "UserPoolId": {
+          "Ref": "McpUserPoolBB3D65BD",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolClient",
+    },
+    "McpUserPoolMcpUserPoolDomainDFFE710D": {
+      "Properties": {
+        "Domain": "awsnews-kb-mcp-123456789012",
+        "UserPoolId": {
+          "Ref": "McpUserPoolBB3D65BD",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolDomain",
+    },
+    "ToolsTarget": {
+      "DependsOn": [
+        "Gateway",
+      ],
+      "Properties": {
+        "CredentialProviderConfigurations": [
+          {
+            "CredentialProviderType": "GATEWAY_IAM_ROLE",
+          },
+        ],
+        "Description": "search_aws_updates / get_article を提供するLambdaターゲット",
+        "GatewayIdentifier": {
+          "Fn::GetAtt": [
+            "Gateway",
+            "GatewayIdentifier",
+          ],
+        },
+        "Name": "awsnews-tools",
+        "TargetConfiguration": {
+          "Mcp": {
+            "Lambda": {
+              "LambdaArn": {
+                "Fn::GetAtt": [
+                  "GatewayToolsLambdaE3968EBB",
+                  "Arn",
+                ],
+              },
+              "ToolSchema": {
+                "InlinePayload": [
+                  {
+                    "Description": "AWS What's New / 公式ブログの記事をキーワード検索する。since_days・category・source・langで絞り込み可能。",
+                    "InputSchema": {
+                      "Properties": {
+                        "category": {
+                          "Description": "記事のカテゴリで絞り込む（任意）",
+                          "Type": "string",
+                        },
+                        "lang": {
+                          "Description": "記事の言語で絞り込む（任意）。値は ja または en",
+                          "Type": "string",
+                        },
+                        "query": {
+                          "Description": "検索キーワード（例: "Graviton5", "S3 Vectors"）",
+                          "Type": "string",
+                        },
+                        "since_days": {
+                          "Description": "直近N日以内に公開された記事に絞り込む（任意）",
+                          "Type": "integer",
+                        },
+                        "source": {
+                          "Description": "出典で絞り込む（任意）。値は次のいずれか。whats-new: AWS What's New、news-blog: AWS News Blog（英語）、jp-blog: AWS Japan Blog（日本語）",
+                          "Type": "string",
+                        },
+                      },
+                      "Required": [
+                        "query",
+                      ],
+                      "Type": "object",
+                    },
+                    "Name": "search_aws_updates",
+                  },
+                  {
+                    "Description": "記事URLからS3上のMarkdown全文を取得する。",
+                    "InputSchema": {
+                      "Properties": {
+                        "url": {
+                          "Description": "記事のURL（search_aws_updatesの結果のurlフィールド）",
+                          "Type": "string",
+                        },
+                      },
+                      "Required": [
+                        "url",
+                      ],
+                      "Type": "object",
+                    },
+                    "Name": "get_article",
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      "Type": "AWS::BedrockAgentCore::GatewayTarget",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
