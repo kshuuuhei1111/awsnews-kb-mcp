@@ -53,7 +53,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="e_tool_kb" value="Retrieve (日付・カテゴリでメタデータフィルタ)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="toolfn" target="kb" parent="1">
+        <mxCell id="e_tool_kb" value="Retrieve (期間・出典・言語でメタデータフィルタ)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;labelBackgroundColor=#f5f5f5;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=10;fontColor=#232F3E;" edge="1" source="toolfn" target="kb" parent="1">
           <mxGeometry relative="1" as="geometry" x="0.45">
             <Array as="points">
               <mxPoint x="1220" y="430"/>
@@ -165,7 +165,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="client" value="&lt;span style=&quot;background-color: rgb(245, 245, 245);&quot;&gt;開発者&lt;br&gt;(Claude Desktop / Kiro / Claude Code)&lt;br&gt;+ mcp-remote&lt;/span&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;html=1;fontSize=11;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.aws4.user;" vertex="1" parent="1">
+        <mxCell id="client" value="&lt;span style=&quot;background-color: rgb(245, 245, 245);&quot;&gt;開発者&lt;br&gt;(Claude Code / Kiro)&lt;br&gt;+ mcp-remote&lt;/span&gt;" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3E;strokeColor=none;html=1;fontSize=11;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.aws4.user;" vertex="1" parent="1">
           <mxGeometry x="110" y="400" width="60" height="60" as="geometry"/>
         </mxCell>
         <mxCell id="cognito" value="&lt;span style=&quot;background-color: rgb(204, 229, 255);&quot;&gt;Amazon Cognito&lt;br&gt;User Pool: awsnews-kb-mcp&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;" vertex="1" parent="1">
@@ -177,7 +177,7 @@
         <mxCell id="toolfn" value="&lt;span style=&quot;background-color: rgb(204, 229, 255);&quot;&gt;ツール Lambda&lt;br&gt;GatewayStack-GatewayToolsLambdaE3968EBB&lt;br&gt;(search_aws_updates / get_article)&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#ED7100;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.lambda;" vertex="1" parent="1">
           <mxGeometry x="1000" y="400" width="60" height="60" as="geometry"/>
         </mxCell>
-        <mxCell id="noteDCR" value="※ Gateway は MCP 認可仕様の動的クライアント登録（DCR）に未対応。Claude Desktop 直結ではなく、mcp-remote に Cognito のクライアント情報を静的設定して認可コードフローで JWT を取得する。" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+        <mxCell id="noteDCR" value="※ Gateway は認可サーバーの場所（Protected Resource Metadata）を返すが、認可サーバーの Cognito が動的クライアント登録（DCR）に未対応。そのため Claude Desktop のカスタムコネクタからは直結できず、mcp-remote に Cognito のクライアント ID とスコープ（awsnews-gateway/invoke）を静的設定して認可コードフローで JWT を取得する。" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
           <mxGeometry x="820" y="520" width="360" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="s3news" value="&lt;span style=&quot;background-color: rgb(255, 242, 204);&quot;&gt;S3 記事バケット&lt;br&gt;ArticlesBucket（CDK 自動命名）&lt;br&gt;news/YYYY/MM/&amp;lt;slug&amp;gt;.md + .metadata.json&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
@@ -189,7 +189,7 @@
         <mxCell id="s3vec" value="&lt;span style=&quot;background-color: rgb(255, 242, 204);&quot;&gt;S3 Vectors&lt;br&gt;VectorBucket（CDK 自動命名）&lt;/span&gt;" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#7AA116;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=11;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;" vertex="1" parent="1">
           <mxGeometry x="1560" y="720" width="60" height="60" as="geometry"/>
         </mxCell>
-        <mxCell id="noteEmb" value="埋め込み: Titan Text Embeddings v2&lt;br&gt;メタデータ: published_at / category / source / url&lt;br&gt;→ Retrieve 時に日付・カテゴリで絞り込み可能" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
+        <mxCell id="noteEmb" value="埋め込み: Titan Text Embeddings v2&lt;br&gt;メタデータ: title / url / published_at / published_at_epoch（数値）/ source / lang / category&lt;br&gt;→ Retrieve 時に期間・出典・言語で絞り込み可能" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#232F3E;" vertex="1" parent="1">
           <mxGeometry x="1660" y="700" width="230" height="80" as="geometry"/>
         </mxCell>
         <mxCell id="rss" value="AWS What's New RSS&lt;br&gt;AWS News Blog RSS&lt;br&gt;AWS Japan Blog RSS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#36393d;fontSize=11;fontColor=#232F3E;" vertex="1" parent="1">

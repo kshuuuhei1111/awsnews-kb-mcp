@@ -225,10 +225,17 @@ sequenceDiagram
 
 | 課題 | 状態 |
 |---|---|
-| `published_at_epoch` / `lang` の追加 | コードは修正済み。`IngestionStack` のデプロイと既存650件への追記（`backfill-metadata.sh --apply`）は未実施 |
 | Slack 通知が失敗する | SSM パラメータ名 `/awsnews-kb-mcp/...` が予約名（`aws` で始まる）に当たる。SSM は先頭の `/` を除いて判定するため、`aws` で始まらない名前への変更が必要 |
 | DLQ アラームが 2026-09-05 から ALARM のまま | Phase 2 の検証時に溜まったメッセージと思われる。未調査 |
 | Ingestion Job が多い（約6週間で419回） | SQS バッチごとにジョブが起動するため。料金への影響は小さい |
 | 同じ記事のチャンクが検索結果を占める | `search_aws_updates` で URL ごとにまとめる処理が未実装 |
-| MCP クライアントからの接続 | 未検証。Tools Lambda の呼び出しは0回 |
+| ツールの引数がログに残らない | Tools Lambda はツール名のみ記録している。クエリとフィルタも記録する予定 |
+| Claude Code の HTTP 接続（`claude mcp add --transport http`） | コールバック URL `/callback` は登録済みだが、接続は未検証。`mcp-remote` 経由は接続確認済み |
 | `category` が `source` と同じ値 | 意味のある分類（サービス名、分野など）に作り直す予定 |
+
+### 解決済み
+
+| 項目 | 内容 |
+|---|---|
+| 期間での絞り込み（`since_days`） | `published_at_epoch` を追加し、既存651件にも追記。2026-10-18 に `since_days` / `lang` 付きの検索で結果が返ることを確認 |
+| MCP クライアントからの接続 | 2026-10-18 に Claude Code から `mcp-remote@0.14.3` 経由で接続し、`search_aws_updates` の呼び出しを確認（[client/README.md](../client/README.md)） |

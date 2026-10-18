@@ -3,9 +3,14 @@
     "awsnews-kb": {
       "command": "npx",
       "args": [
-        "mcp-remote",
+        "-y",
+        "mcp-remote@0.14.3",
         "<GatewayStackのCfnOutput GatewayUrl の値>",
-        "8090"
+        "8090",
+        "--static-oauth-client-info",
+        "{\"client_id\":\"<GatewayStackのCfnOutput UserPoolClientId の値>\"}",
+        "--static-oauth-client-metadata",
+        "{\"scope\":\"awsnews-gateway/invoke\"}"
       ]
     }
   }

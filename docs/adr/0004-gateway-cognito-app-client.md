@@ -36,3 +36,14 @@ AgentCore GatewayのCUSTOM_JWTオーソライザーで検証する。クライ�
   ポート番号を明示する必要がある。実機接続で固定ポートの指定方法（CLI引数か環境変数か）が
   想定と異なる場合は、このADRとclient/mcp.jsonを合わせて更新する
 - Claude Desktopのカスタムコネクタ（DCR前提）は引き続き非対応（CLAUDE.md記載の通り）
+
+## 追記（2026-10-18: 実機接続の結果）
+
+- `mcp-remote@0.14.3` で、固定ポートは第2引数（`8090`）で指定できることを確認した
+- Cognito は DCR に未対応のため、`--static-oauth-client-info` で App Client ID を渡す必要がある
+- スコープを指定しないと Cognito のメタデータにある `openid` などを要求して `invalid_scope` に
+  なるため、`--static-oauth-client-metadata` で `awsnews-gateway/invoke` に固定する
+- Gateway 側は 401 応答で Protected Resource Metadata を返すので、認可サーバーの場所の設定は不要
+- Claude Code の HTTP 接続（`--callback-port`）はコールバック URL に `/callback` を使うため、
+  既定のコールバック URL に `http://localhost:8090/callback` を追加した（接続は未検証）
+- DCR に未対応なのは Gateway ではなく、認可サーバーの Cognito である

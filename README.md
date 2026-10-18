@@ -39,7 +39,8 @@ flowchart LR
 - [x] Phase 1: KnowledgeBaseStack（S3 記事バケット、S3 Vectors、Bedrock KB）— `ap-northeast-1` にデプロイ済み
 - [x] Phase 2: IngestionStack（RSS 取得 → Markdown 変換 → KB 取り込み）— 130記事の初回同期・KB検索まで確認済み
 - [x] Phase 3: GatewayStack（Cognito、AgentCore Gateway、MCP ツール）— `ap-northeast-1` にデプロイ済み。
-      `mcp-remote` からの実接続はまだ未検証
+      Claude Code から `mcp-remote` 経由で接続し、ツール呼び出しまで確認済み。
+      メタデータに数値の日付と言語を追加し、期間・出典・言語で絞り込めるようにした
       （[docs/adr/0004](docs/adr/0004-gateway-cognito-app-client.md)、[client/README.md](client/README.md) 参照）
 - [ ] Phase 4: 動作確認・コスト実測・削除手順の確定
 
@@ -79,7 +80,7 @@ npx cdk deploy GatewayStack
 
 `GatewayStack` デプロイ後の接続手順は [client/README.md](client/README.md) と
 [client/mcp.json.example](client/mcp.json.example) を参照してください。
-実機での接続確認はまだ行っておらず、未検証事項は client/README.md に明記しています。
+Claude Code からの `mcp-remote` 経由の接続は確認済みです。検証状況は client/README.md に明記しています。
 
 ## 動作確認の質問例
 

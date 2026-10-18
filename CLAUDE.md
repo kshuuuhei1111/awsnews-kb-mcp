@@ -52,9 +52,10 @@ RSS ソース（初期値）:
 - AgentCore Gateway に Cognito の JWT インバウンド認可を設定
 - Gateway の Lambda ターゲットに `search_aws_updates` / `get_article` の2ツールを実装
 - クライアントは Kiro / Claude Code から `mcp-remote` 経由で接続（第一段階）
-- 注意: AgentCore Gateway は MCP 認可仕様の動的クライアント登録（DCR）に未対応のため、
+- 注意: Gateway は Protected Resource Metadata（`/.well-known/oauth-protected-resource`）を
+  返すが、認可サーバーの Cognito が MCP 認可仕様の動的クライアント登録（DCR）に未対応のため、
   Claude Desktop のカスタムコネクタから直接 OAuth 接続はできない。第二段階（任意）として
-  API Gateway + 薄いプロキシ Lambda で `.well-known` と DCR を補う構成を検討課題とする
+  API Gateway + 薄いプロキシ Lambda で DCR を補う構成を検討課題とする
 
 ### やらないこと（Non-goals）
 
